@@ -124,8 +124,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </address>
           </div>
         </div>
-        <div className="border-t border-primary-foreground/10 py-6 text-center text-sm text-primary-foreground/60">
-          © {new Date().getFullYear()} Quantum Research Group. All rights reserved.
+        <div className="border-t border-primary-foreground/10 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-primary-foreground/60 gap-4">
+          <p>© {new Date().getFullYear()} Quantum Research Group. All rights reserved.</p>
+          <Link href="/login">
+            <a className="hover:text-white transition-colors flex items-center gap-2">
+              Admin Login
+            </a>
+          </Link>
         </div>
       </footer>
     </div>

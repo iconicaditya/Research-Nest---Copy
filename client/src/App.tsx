@@ -12,6 +12,8 @@ import Publications from "@/pages/publications";
 import Projects from "@/pages/projects";
 import Activities from "@/pages/activities";
 import Gallery from "@/pages/gallery";
+import Login from "@/pages/login";
+import Dashboard from "@/pages/admin/dashboard";
 
 function Router() {
   return (
@@ -24,7 +26,13 @@ function Router() {
       <Route path="/projects" component={Projects} />
       <Route path="/activities" component={Activities} />
       <Route path="/gallery" component={Gallery} />
-      <Route path="/contact" component={Team} /> {/* Reuse Team page for contact for now */}
+      <Route path="/contact" component={Team} />
+      
+      {/* Admin Routes */}
+      <Route path="/login" component={Login} />
+      <Route path="/admin" component={Dashboard} /> {/* Redirects to login if not auth'd handled by component */}
+      <Route path="/admin/dashboard" component={Dashboard} />
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
