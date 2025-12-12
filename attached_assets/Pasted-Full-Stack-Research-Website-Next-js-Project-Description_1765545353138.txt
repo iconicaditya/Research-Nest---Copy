@@ -1,0 +1,186 @@
+Full-Stack Research Website — Next.js Project Description
+
+Project Title: Research Group Website
+Framework: Next.js (latest version, App Router)
+Goal: Build a professional, responsive full-stack website for a research group/lab, including an admin dashboard for managing all content.
+
+Website Structure & Requirements
+1. Home Page
+
+Hero banner or slideshow
+
+Brief intro about the research group
+
+Highlights of research areas, recent publications, and announcements
+
+Quick navigation cards
+
+2. About Page
+
+Detailed description of the research group and its mission
+
+Institutional affiliations
+
+History/timeline (optional)
+
+3. Our Team
+
+Team list with images, names, positions, contacts
+
+Member details with profile pages
+
+Categories: PI, researchers, PhD students, MSc/BSc students, alumni
+
+4. Research
+
+Summary of major research areas
+
+Expandable sections or individual pages for each research theme
+
+Ability to attach images, diagrams, or link related publications/projects
+
+5. Publications
+
+Publications listed by year or type
+
+Filtering + sorting
+
+Formatted citations
+
+Optional: upload PDF or provide DOI/arXiv link
+
+6. Projects
+
+List of ongoing and completed projects
+
+Each project includes: title, summary, collaborators, funding, duration, deliverables
+
+Optional images or video embeds
+
+7. Collaborators
+
+List of collaborating institutions and researchers
+
+Logos and short profiles
+
+Optional interactive map
+
+8. Activities
+
+Blog-style posts: seminars, workshops, outreach events
+
+Each activity contains: title, date, description, images
+
+9. Gallery
+
+Photo + video gallery
+
+Organized in albums
+
+Lightbox viewer
+
+10. Admin Panel (CMS)
+
+Secure Admin Dashboard built with Next.js + API Routes
+
+JWT or NextAuth authentication
+
+CRUD operations for all content:
+
+Team
+
+Projects
+
+Publications
+
+Activities
+
+Gallery
+
+Collaborators
+
+Homepage content
+
+File upload support (images, PDFs)
+
+Media library
+
+Rich text editor for descriptions (e.g., TipTap / Quill)
+
+Technical Requirements
+Frontend (Next.js)
+
+Next.js (App Router)
+
+Typescript recommended
+
+TailwindCSS or Material UI for styling
+
+Responsive + SEO optimized
+
+Dynamic routing for team profiles, publications, and projects
+
+ISR / SSR where needed
+
+Backend
+
+Next.js API Routes for full REST API or integrate a separate backend
+
+Authentication using JWT or NextAuth
+
+Protected API endpoints for admin access
+
+Image/file uploads handled via API or cloud storage
+
+Database
+
+Use MongoDB or PostgreSQL (preferred).
+Tables/Collections:
+
+Users (Admin)
+
+TeamMembers
+
+ResearchAreas
+
+Publications
+
+Projects
+
+Collaborators
+
+Activities
+
+Gallery
+
+HomepageContent
+
+Use Prisma ORM (recommended) or Mongoose if using MongoDB.
+
+Storage
+
+Cloud storage for images (Cloudinary/Supabase/AWS S3)
+
+Serve optimized images through Next.js Image component
+
+Deployment
+
+Deploy frontend + backend on Vercel (ideal)
+
+Database on Supabase / MongoDB Atlas / PlanetScale
+
+Environment variables for secure settings
+
+Optional Enhancements
+
+Global search bar
+
+Dark/Light mode
+
+RSS feed for activities
+
+BibTeX export for publications
+
+Analytics in admin dashboard
+
+Sitemap + robots.txt
