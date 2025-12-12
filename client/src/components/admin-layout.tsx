@@ -60,16 +60,18 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         
         <nav className="p-4 space-y-2">
           {SIDEBAR_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <a className={cn(
+            <Link 
+              key={item.href} 
+              href={item.href}
+              className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium",
                 window.location.pathname === item.href 
                   ? "bg-accent text-white" 
                   : "text-primary-foreground/70 hover:bg-white/10 hover:text-white"
-              )}>
-                <item.icon className="h-5 w-5" />
-                {item.label}
-              </a>
+              )}
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
             </Link>
           ))}
         </nav>

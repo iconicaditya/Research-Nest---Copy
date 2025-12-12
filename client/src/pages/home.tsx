@@ -69,11 +69,12 @@ export default function Home() {
                   <p className="text-sm font-medium text-muted-foreground">Ongoing Projects</p>
                 </div>
               </div>
-              <Link href="/about">
-                <a className="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors mt-4 group">
-                  Learn more about our mission 
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </a>
+              <Link 
+                href="/about" 
+                className="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors mt-4 group"
+              >
+                Learn more about our mission 
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             <div className="relative">
@@ -104,7 +105,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {RESEARCH_AREAS.map((area) => (
-              <Link key={area.id} href="/research">
+              <Link key={area.id} href="/research" className="block h-full">
                 <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-none shadow-md overflow-hidden h-full flex flex-col">
                   <div className="aspect-video overflow-hidden">
                     <img 
@@ -165,10 +166,11 @@ export default function Home() {
                   <p className="text-muted-foreground text-sm line-clamp-2">
                     {activity.description}
                   </p>
-                  <Link href="/activities">
-                    <a className="inline-block text-sm font-medium text-primary underline decoration-accent/50 underline-offset-4 hover:decoration-accent transition-all">
-                      Read full story
-                    </a>
+                  <Link 
+                    href="/activities" 
+                    className="inline-block text-sm font-medium text-primary underline decoration-accent/50 underline-offset-4 hover:decoration-accent transition-all"
+                  >
+                    Read full story
                   </Link>
                 </div>
               </div>
@@ -191,24 +193,24 @@ export default function Home() {
               <FileText className="h-10 w-10 text-accent mb-4" />
               <h3 className="text-xl font-bold mb-2">Publications</h3>
               <p className="text-primary-foreground/70 mb-4 text-sm">Browse our latest peer-reviewed papers and conference proceedings.</p>
-              <Link href="/publications">
-                <a className="text-sm font-semibold hover:text-accent transition-colors">View Library &rarr;</a>
+              <Link href="/publications" className="text-sm font-semibold hover:text-accent transition-colors block">
+                View Library &rarr;
               </Link>
             </div>
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
               <FlaskConical className="h-10 w-10 text-accent mb-4" />
               <h3 className="text-xl font-bold mb-2">Projects</h3>
               <p className="text-primary-foreground/70 mb-4 text-sm">Discover our funded research projects and collaborations.</p>
-              <Link href="/projects">
-                <a className="text-sm font-semibold hover:text-accent transition-colors">See Projects &rarr;</a>
+              <Link href="/projects" className="text-sm font-semibold hover:text-accent transition-colors block">
+                See Projects &rarr;
               </Link>
             </div>
             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
               <Users className="h-10 w-10 text-accent mb-4" />
               <h3 className="text-xl font-bold mb-2">Join Us</h3>
               <p className="text-primary-foreground/70 mb-4 text-sm">Interested in joining the team? Check out open positions.</p>
-              <Link href="/contact">
-                <a className="text-sm font-semibold hover:text-accent transition-colors">Get in Touch &rarr;</a>
+              <Link href="/contact" className="text-sm font-semibold hover:text-accent transition-colors block">
+                Get in Touch &rarr;
               </Link>
             </div>
           </div>

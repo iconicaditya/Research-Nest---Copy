@@ -21,27 +21,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/">
-            <a className="flex items-center gap-2 font-serif font-bold text-xl md:text-2xl tracking-tight text-primary hover:opacity-80 transition-opacity">
-              <GraduationCap className="h-8 w-8 text-accent" />
-              <span>Quantum Research Group</span>
-            </a>
+          <Link href="/" className="flex items-center gap-2 font-serif font-bold text-xl md:text-2xl tracking-tight text-primary hover:opacity-80 transition-opacity">
+            <GraduationCap className="h-8 w-8 text-accent" />
+            <span>Quantum Research Group</span>
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-accent",
-                    location === link.href
-                      ? "text-accent font-semibold"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {link.label}
-                </a>
+              <Link 
+                key={link.href} 
+                href={link.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-accent",
+                  location === link.href
+                    ? "text-accent font-semibold"
+                    : "text-muted-foreground"
+                )}
+              >
+                {link.label}
               </Link>
             ))}
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-accent">
@@ -64,16 +62,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="lg:hidden border-t bg-background p-4 shadow-lg absolute w-full z-50">
             <nav className="flex flex-col gap-4">
               {NAV_LINKS.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <a
-                    className={cn(
-                      "text-base font-medium py-2 transition-colors hover:text-accent border-b border-border/50",
-                      location === link.href ? "text-accent" : "text-foreground"
-                    )}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
+                <Link 
+                  key={link.href} 
+                  href={link.href}
+                  className={cn(
+                    "text-base font-medium py-2 transition-colors hover:text-accent border-b border-border/50",
+                    location === link.href ? "text-accent" : "text-foreground"
+                  )}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
                 </Link>
               ))}
             </nav>
@@ -101,10 +99,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <ul className="space-y-2">
               {NAV_LINKS.slice(0, 4).map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href}>
-                    <a className="text-primary-foreground/80 hover:text-white transition-colors">
-                      {link.label}
-                    </a>
+                  <Link href={link.href} className="text-primary-foreground/80 hover:text-white transition-colors">
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -126,10 +122,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
         <div className="border-t border-primary-foreground/10 py-6 flex flex-col md:flex-row justify-between items-center text-sm text-primary-foreground/60 gap-4">
           <p>© {new Date().getFullYear()} Quantum Research Group. All rights reserved.</p>
-          <Link href="/login">
-            <a className="hover:text-white transition-colors flex items-center gap-2">
-              Admin Login
-            </a>
+          <Link href="/login" className="hover:text-white transition-colors flex items-center gap-2">
+            Admin Login
           </Link>
         </div>
       </footer>
