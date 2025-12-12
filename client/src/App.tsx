@@ -14,6 +14,12 @@ import Activities from "@/pages/activities";
 import Gallery from "@/pages/gallery";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/admin/dashboard";
+import AdminTeam from "@/pages/admin/team";
+import AdminResearch from "@/pages/admin/research";
+import AdminPublications from "@/pages/admin/publications";
+import AdminProjects from "@/pages/admin/projects";
+import AdminActivities from "@/pages/admin/activities";
+import AdminGallery from "@/pages/admin/gallery";
 
 function Router() {
   return (
@@ -30,8 +36,14 @@ function Router() {
       
       {/* Admin Routes */}
       <Route path="/login" component={Login} />
-      <Route path="/admin" component={Dashboard} /> {/* Redirects to login if not auth'd handled by component */}
+      <Route path="/admin" component={Dashboard} />
       <Route path="/admin/dashboard" component={Dashboard} />
+      <Route path="/admin/team" component={AdminTeam} />
+      <Route path="/admin/research" component={AdminResearch} />
+      <Route path="/admin/publications" component={AdminPublications} />
+      <Route path="/admin/projects" component={AdminProjects} />
+      <Route path="/admin/activities" component={AdminActivities} />
+      <Route path="/admin/gallery" component={AdminGallery} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
