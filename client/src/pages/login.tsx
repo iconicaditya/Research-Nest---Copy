@@ -29,28 +29,42 @@ export default function Login() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    // Mock login delay
-    setTimeout(() => {
-      setIsLoading(false);
-      if (values.username === "admin" && values.password === "admin") {
-        // In a real app, this would be a server-side session
-        localStorage.setItem("mock_auth_token", "admin-token");
-        toast({
-          title: "Login Successful",
-          description: "Welcome back, Administrator.",
-        });
-        setLocation("/admin/dashboard");
-      } else {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
         toast({
           variant: "destructive",
           title: "Login Failed",
-          description: "Invalid username or password. (Try admin/admin)",
+          description: data.error || "Invalid username or password",
         });
+        setIsLoading(false);
+        return;
       }
-    }, 1000);
+
+      toast({
+        title: "Login Successful",
+        description: "Welcome back, Administrator.",
+      });
+      setLocation("/admin/dashboard");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to connect to server",
+      });
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -82,7 +96,7 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="admin" {...field} />
+                      <Input placeholder="admin" {...field} data-testid="input-username" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -95,13 +109,13 @@ export default function Login() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input type="password" placeholder="••••••••" {...field} data-testid="input-password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full" disabled={isLoading} data-testid="button-login">
                 {isLoading ? (
                   <>Logging in...</>
                 ) : (

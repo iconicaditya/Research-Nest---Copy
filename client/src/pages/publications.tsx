@@ -1,16 +1,22 @@
 import { Layout } from "@/components/layout";
-import { PUBLICATIONS } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, FileText, Download, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPublications } from "@/lib/api";
 
 export default function Publications() {
   const [search, setSearch] = useState("");
   const [yearFilter, setYearFilter] = useState("all");
 
-  const filteredPublications = PUBLICATIONS.filter(pub => {
+  const { data: publications = [], isLoading } = useQuery({
+    queryKey: ["publications"],
+    queryFn: fetchPublications,
+  });
+
+  const filteredPublications = publications.filter((pub: any) => {
     const matchesSearch = pub.title.toLowerCase().includes(search.toLowerCase()) || 
                           pub.authors.toLowerCase().includes(search.toLowerCase());
     const matchesYear = yearFilter === "all" || pub.year.toString() === yearFilter;
@@ -37,11 +43,12 @@ export default function Publications() {
               className="pl-10"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              data-testid="input-search-publications"
             />
           </div>
           <div className="w-full md:w-48">
             <Select value={yearFilter} onValueChange={setYearFilter}>
-              <SelectTrigger>
+              <SelectTrigger data-testid="select-year-filter">
                 <SelectValue placeholder="Filter by Year" />
               </SelectTrigger>
               <SelectContent>
@@ -54,37 +61,43 @@ export default function Publications() {
           </div>
         </div>
 
-        <div className="space-y-6">
-          {filteredPublications.length > 0 ? (
-            filteredPublications.map((pub) => (
-              <div key={pub.id} className="bg-card p-6 rounded-lg border shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <h3 className="font-serif text-xl font-bold text-primary">{pub.title}</h3>
-                    <p className="text-muted-foreground italic">{pub.authors}</p>
-                    <div className="flex flex-wrap gap-3 text-sm">
-                      <span className="font-semibold text-accent">{pub.journal}</span>
-                      <span className="text-muted-foreground">•</span>
-                      <span className="text-muted-foreground">{pub.year}</span>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading publications...</p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {filteredPublications.length > 0 ? (
+              filteredPublications.map((pub: any) => (
+                <div key={pub.id} className="bg-card p-6 rounded-lg border shadow-sm hover:shadow-md transition-shadow" data-testid={`publication-${pub.id}`}>
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                    <div className="space-y-2">
+                      <h3 className="font-serif text-xl font-bold text-primary">{pub.title}</h3>
+                      <p className="text-muted-foreground italic">{pub.authors}</p>
+                      <div className="flex flex-wrap gap-3 text-sm">
+                        <span className="font-semibold text-accent">{pub.journal}</span>
+                        <span className="text-muted-foreground">•</span>
+                        <span className="text-muted-foreground">{pub.year}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <ExternalLink className="h-4 w-4" /> DOI
+                      </Button>
+                      <Button variant="outline" size="sm" className="gap-2">
+                        <Download className="h-4 w-4" /> PDF
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-2 shrink-0">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <ExternalLink className="h-4 w-4" /> DOI
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Download className="h-4 w-4" /> PDF
-                    </Button>
-                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center py-12 text-muted-foreground">
+                No publications found matching your criteria.
               </div>
-            ))
-          ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              No publications found matching your criteria.
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </Layout>
   );

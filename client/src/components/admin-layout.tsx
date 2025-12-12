@@ -17,13 +17,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { logout } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 
 const SIDEBAR_ITEMS = [
   { icon: LayoutDashboard, label: "Overview", href: "/admin/dashboard" },
   { icon: Users, label: "Team Members", href: "/admin/team" },
   { icon: FlaskConical, label: "Research Areas", href: "/admin/research" },
   { icon: FileText, label: "Publications", href: "/admin/publications" },
-  { icon: FlaskConical, label: "Projects", href: "/admin/projects" }, // Reusing icon for simplicity
+  { icon: FlaskConical, label: "Projects", href: "/admin/projects" },
   { icon: Calendar, label: "Activities", href: "/admin/activities" },
   { icon: ImageIcon, label: "Media Gallery", href: "/admin/gallery" },
 ];
@@ -31,18 +33,19 @@ const SIDEBAR_ITEMS = [
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { toast } = useToast();
 
-  // Simple mock auth check
-  useEffect(() => {
-    const token = localStorage.getItem("mock_auth_token");
-    if (!token) {
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast({
+        title: "Logged out successfully",
+      });
+      setLocation("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
       setLocation("/login");
     }
-  }, [setLocation]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("mock_auth_token");
-    setLocation("/login");
   };
 
   return (

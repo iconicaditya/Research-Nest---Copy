@@ -1,13 +1,19 @@
 import { Layout } from "@/components/layout";
-import { PROJECTS } from "@/lib/data";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProjects } from "@/lib/api";
 import dnaImage from "@assets/generated_images/abstract_dna_double_helix_structure.png";
 import robotImage from "@assets/generated_images/robotic_arm_in_a_lab_setting.png";
 
 export default function Projects() {
+  const { data: projects = [], isLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+  });
+
   return (
     <Layout>
       <div className="bg-muted/30 py-16">
@@ -20,38 +26,44 @@ export default function Projects() {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {PROJECTS.map((project, index) => (
-            <Card key={project.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300">
-              <div className="h-48 overflow-hidden">
-                <img 
-                  src={index % 2 === 0 ? dnaImage : robotImage} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                />
-              </div>
-              <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <Badge variant={project.status === "Ongoing" ? "default" : "secondary"} className="mb-2">
-                    {project.status}
-                  </Badge>
-                  <span className="text-xs font-mono text-muted-foreground border px-2 py-0.5 rounded">{project.funding}</span>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading projects...</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project: any, index: number) => (
+              <Card key={project.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300" data-testid={`project-${project.id}`}>
+                <div className="h-48 overflow-hidden">
+                  <img 
+                    src={index % 2 === 0 ? dnaImage : robotImage} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                  />
                 </div>
-                <CardTitle className="font-serif text-xl">{project.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {project.summary}
-                </p>
-              </CardContent>
-              <CardFooter className="pt-0">
-                <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent hover:text-accent">
-                  View Details <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+                <CardHeader>
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge variant={project.status === "Ongoing" ? "default" : "secondary"} className="mb-2">
+                      {project.status}
+                    </Badge>
+                    <span className="text-xs font-mono text-muted-foreground border px-2 py-0.5 rounded">{project.funding}</span>
+                  </div>
+                  <CardTitle className="font-serif text-xl">{project.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {project.summary}
+                  </p>
+                </CardContent>
+                <CardFooter className="pt-0">
+                  <Button variant="ghost" className="p-0 h-auto font-semibold hover:bg-transparent hover:text-accent">
+                    View Details <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </Layout>
   );

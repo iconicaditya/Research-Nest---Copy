@@ -1,13 +1,24 @@
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { RESEARCH_AREAS, ACTIVITIES, PROJECTS } from "@/lib/data";
 import { ArrowRight, FileText, FlaskConical, Users, Calendar } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { fetchResearchAreas, fetchActivities } from "@/lib/api";
 import heroImage from "@assets/generated_images/modern_bright_science_laboratory_with_equipment.png";
 import networkImage from "@assets/generated_images/abstract_blue_network_data_visualization.png";
 
 export default function Home() {
+  const { data: researchAreas = [] } = useQuery({
+    queryKey: ["research-areas"],
+    queryFn: fetchResearchAreas,
+  });
+
+  const { data: activities = [] } = useQuery({
+    queryKey: ["activities"],
+    queryFn: fetchActivities,
+  });
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -34,12 +45,12 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/research">
-                <Button size="lg" className="text-base px-8 py-6 bg-accent text-white hover:bg-accent/90 border-none shadow-lg shadow-accent/20">
+                <Button size="lg" className="text-base px-8 py-6 bg-accent text-white hover:bg-accent/90 border-none shadow-lg shadow-accent/20" data-testid="button-explore-research">
                   Explore Research
                 </Button>
               </Link>
               <Link href="/team">
-                <Button size="lg" variant="outline" className="text-base px-8 py-6 text-white border-white hover:bg-white/10 hover:text-white backdrop-blur-sm">
+                <Button size="lg" variant="outline" className="text-base px-8 py-6 text-white border-white hover:bg-white/10 hover:text-white backdrop-blur-sm" data-testid="button-meet-team">
                   Meet the Team
                 </Button>
               </Link>
@@ -85,7 +96,6 @@ export default function Home() {
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />
               </div>
-              {/* Decorative element */}
               <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-accent/10 rounded-full blur-2xl -z-10" />
               <div className="absolute -top-6 -right-6 w-32 h-32 bg-primary/10 rounded-full blur-2xl -z-10" />
             </div>
@@ -104,9 +114,9 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {RESEARCH_AREAS.map((area) => (
+            {researchAreas.slice(0, 3).map((area: any) => (
               <Link key={area.id} href="/research" className="block h-full">
-                <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-none shadow-md overflow-hidden h-full flex flex-col">
+                <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 border-none shadow-md overflow-hidden h-full flex flex-col" data-testid={`card-research-${area.id}`}>
                   <div className="aspect-video overflow-hidden">
                     <img 
                       src={area.image} 
@@ -145,13 +155,13 @@ export default function Home() {
               <p className="text-muted-foreground">News, events, and outreach from our lab.</p>
             </div>
             <Link href="/activities">
-              <Button variant="outline" className="hidden md:flex">View All Activities</Button>
+              <Button variant="outline" className="hidden md:flex" data-testid="button-view-activities">View All Activities</Button>
             </Link>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {ACTIVITIES.slice(0, 2).map((activity) => (
-              <div key={activity.id} className="group flex gap-6 items-start">
+            {activities.slice(0, 2).map((activity: any) => (
+              <div key={activity.id} className="group flex gap-6 items-start" data-testid={`activity-${activity.id}`}>
                 <div className="w-24 h-24 shrink-0 rounded-lg overflow-hidden hidden sm:block">
                   <img src={activity.image} alt={activity.title} className="w-full h-full object-cover" />
                 </div>

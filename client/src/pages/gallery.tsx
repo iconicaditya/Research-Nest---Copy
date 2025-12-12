@@ -4,7 +4,7 @@ import networkImage from "@assets/generated_images/abstract_blue_network_data_vi
 import dnaImage from "@assets/generated_images/abstract_dna_double_helix_structure.png";
 import robotImage from "@assets/generated_images/robotic_arm_in_a_lab_setting.png";
 
-const IMAGES = [
+const DEFAULT_IMAGES = [
   { src: heroImage, alt: "Lab Equipment" },
   { src: networkImage, alt: "Data Viz" },
   { src: dnaImage, alt: "DNA Structure" },
@@ -27,8 +27,8 @@ export default function Gallery() {
 
       <div className="container mx-auto px-4 md:px-6 py-16">
         <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-          {IMAGES.map((img, idx) => (
-            <div key={idx} className="break-inside-avoid rounded-xl overflow-hidden group relative">
+          {DEFAULT_IMAGES.map((img, idx) => (
+            <div key={idx} className="break-inside-avoid rounded-xl overflow-hidden group relative" data-testid={`gallery-image-${idx}`}>
               <img 
                 src={img.src} 
                 alt={img.alt} 
