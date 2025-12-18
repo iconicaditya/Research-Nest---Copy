@@ -20,7 +20,8 @@ import {
   projects,
   activities,
   galleryImages
-} from "@shared/schema";
+} from "../shared/schema"; // ✅ relative path for production
+
 import { db } from "./db";
 import { eq, asc, desc } from "drizzle-orm";
 

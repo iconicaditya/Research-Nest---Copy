@@ -1,8 +1,13 @@
 import { db } from "./db";
 import { users, teamMembers, researchAreas, publications, projects, activities, galleryImages } from "@shared/schema";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 async function seed() {
+  if (process.env.NODE_ENV === "production") {
+    console.log("⚠️  Seeding is disabled in production!");
+    return;
+  }
+
   console.log("Starting database seed...");
 
   // Create admin user
@@ -153,7 +158,10 @@ async function seed() {
   console.log("Database seed completed successfully!");
 }
 
-seed().catch((error) => {
-  console.error("Seed failed:", error);
-  process.exit(1);
-});
+// Only run seed manually
+if (require.main === module) {
+  seed().catch((error) => {
+    console.error("Seed failed:", error);
+    throw error; // Do not use process.exit in serverless
+  });
+}
