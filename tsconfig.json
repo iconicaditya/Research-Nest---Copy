@@ -15,7 +15,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
 
-    "noEmit": true,
+    "noEmit": true,  // ensures TS does not output compiled files, needed for serverless
 
     "target": "ES2022",
     "module": "ESNext",
@@ -24,13 +24,13 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowImportingTsExtensions": true,
 
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "jsx": "preserve",
 
     "baseUrl": ".",
     "types": ["node", "vite/client"],
+
     "paths": {
       "@/*": ["client/src/*"],
       "@shared/*": ["shared/*"]

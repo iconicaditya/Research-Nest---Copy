@@ -1,14 +1,17 @@
-// Load environment variables only in development
+// server/index.ts
 import "dotenv/config";
-import express, { type Request, type Response, type NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import helmet from "helmet";
+import pgSession from "connect-pg-simple";
+
 import { registerRoutes } from "./routes";
+import { pool } from "./db";
 
 const app = express();
 
 /* ----------------------------------------------------
-   Type augmentation
+   Type augmentation for rawBody
 ---------------------------------------------------- */
 declare module "http" {
   interface IncomingMessage {
@@ -17,41 +20,31 @@ declare module "http" {
 }
 
 /* ----------------------------------------------------
-   Middleware
+   Security headers
 ---------------------------------------------------- */
+app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc:
+        process.env.NODE_ENV !== "production"
+          ? ["'self'", "'unsafe-inline'", "http://localhost:3000"]
+          : ["'self'"],
+      connectSrc:
+        process.env.NODE_ENV !== "production"
+          ? ["'self'", "http://localhost:3000"]
+          : ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      fontSrc: ["'self'"],
+    },
+  })
+);
 
-// CSP middleware
-if (process.env.NODE_ENV !== "production") {
-  // Development: relaxed CSP to allow localhost and inline scripts/styles
-  app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "http://localhost:3000"],
-        connectSrc: ["'self'", "http://localhost:3000"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:"],
-        fontSrc: ["'self'"],
-      },
-    })
-  );
-} else {
-  // Production: strict CSP, only allow trusted sources
-  app.use(
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        connectSrc: ["'self'"],
-        styleSrc: ["'self'"],
-        imgSrc: ["'self'"],
-        fontSrc: ["'self'"],
-      },
-    })
-  );
-}
-
-// Parse JSON and capture raw body
+/* ----------------------------------------------------
+   Body parsers
+---------------------------------------------------- */
 app.use(
   express.json({
     verify: (req, _res, buf) => {
@@ -59,72 +52,68 @@ app.use(
     },
   })
 );
-
 app.use(express.urlencoded({ extended: false }));
 
-// Session middleware
+/* ----------------------------------------------------
+   Session configuration with PostgreSQL
+---------------------------------------------------- */
+const PgSession = pgSession(session);
+
 app.use(
   session({
-    secret: process.env.SESSION_SECRET ?? "supersecret123",
+    store: new PgSession({ pool, tableName: "session" }),
+    name: "connect.sid",
+    secret: process.env.SESSION_SECRET || "supersecret123",
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
 );
 
 /* ----------------------------------------------------
-   Root route (fix 404)
+   Logger middleware
 ---------------------------------------------------- */
-app.get("/", (_req, res) => {
-  res.send("Welcome to Research-Nest API!");
-});
-
-/* ----------------------------------------------------
-   Logging
----------------------------------------------------- */
-export function log(message: string, source = "express") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-  console.log(`${formattedTime} [${source}] ${message}`);
-}
-
-// API request logging
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: unknown;
+  let responseBody: unknown;
 
   const originalJson = res.json.bind(res);
   res.json = (body: any) => {
-    capturedJsonResponse = body;
+    responseBody = body;
     return originalJson(body);
   };
 
   res.on("finish", () => {
-    if (!path.startsWith("/api")) return;
+    if (!req.path.startsWith("/api")) return;
     const duration = Date.now() - start;
-    let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-    if (capturedJsonResponse) {
-      logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-    }
-    log(logLine);
+    console.log(
+      `${new Date().toLocaleTimeString()} [express] ${req.method} ${
+        req.path
+      } ${res.statusCode} in ${duration}ms${
+        responseBody ? ` :: ${JSON.stringify(responseBody)}` : ""
+      }`
+    );
   });
 
   next();
 });
 
 /* ----------------------------------------------------
+   Root route
+---------------------------------------------------- */
+app.get("/", (_req, res) => {
+  res.status(200).send("🚀 Research-Nest API is running");
+});
+
+/* ----------------------------------------------------
    Register API routes
 ---------------------------------------------------- */
 registerRoutes(app).catch((err) => {
-  console.error("❌ Failed to register routes:", err);
+  console.error("❌ Route registration failed:", err);
   process.exit(1);
 });
 
@@ -133,21 +122,22 @@ registerRoutes(app).catch((err) => {
 ---------------------------------------------------- */
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal server error";
-  res.status(status).json({ message });
+  res.status(status).json({
+    message: err.message || "Internal Server Error",
+  });
 });
 
 /* ----------------------------------------------------
-   Local dev server (ONLY in development)
+   Local dev server
 ---------------------------------------------------- */
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`✅ Server running at http://localhost:${PORT}`);
   });
 }
 
 /* ----------------------------------------------------
-   Export for Vercel serverless
+   Export app for Vercel serverless
 ---------------------------------------------------- */
 export default app;
